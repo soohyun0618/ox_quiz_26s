@@ -122,8 +122,19 @@
   }
   .btn.primary:hover { background: #1338a8; }
 
-  select {
-    padding: 7px 12px;
+  .jump-wrap { display: flex; gap: 4px; align-items: center; }
+  .jump-input {
+    width: 90px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 0.8rem;
+  }
+  .jump-input::placeholder { color: var(--text-dim); }
+  .jump-input:focus { outline: none; border-color: var(--accent); }
     border-radius: 8px;
     border: 1px solid var(--border);
     background: var(--surface2);
@@ -368,6 +379,10 @@
     <button class="mode-btn" id="mode-wrong" onclick="setMode('wrong')">오답만</button>
     <button class="mode-btn" id="mode-shuffle" onclick="setMode('shuffle')">랜덤</button>
   </div>
+  <div class="jump-wrap">
+    <input type="number" id="jump-input" class="jump-input" placeholder="번호 이동" min="1" onkeydown="if(event.key==='Enter')jumpTo()">
+    <button class="btn" onclick="jumpTo()">이동</button>
+  </div>
   <button class="btn primary" onclick="restartQuiz()">처음부터</button>
 </div>
 
@@ -599,6 +614,20 @@ function reviewWrong() {
   wrongItems = savedWrong;
   idx=0; correctCount=0; wrongCount=0;
   rebuildFiltered();
+  saveState();
+  renderQuestion();
+}
+
+function jumpTo() {
+  const input = document.getElementById('jump-input');
+  const n = parseInt(input.value);
+  if (!n || n < 1 || n > filtered.length) {
+    input.style.borderColor = 'var(--wrong)';
+    setTimeout(() => input.style.borderColor = '', 1000);
+    return;
+  }
+  idx = n - 1;
+  input.value = '';
   saveState();
   renderQuestion();
 }
